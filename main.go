@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	addr, err := net.ResolveUDPAddr("udp", "127.0.0.1:1054")
+	addr, err := net.ResolveUDPAddr("udp", ":1054") // TODO: why does :1054 work but `localhost:1054` or `127.0.0.1:1054` don't?
 	if err != nil {
 		log.Err(err)
 		os.Exit(1)

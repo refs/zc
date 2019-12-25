@@ -34,7 +34,7 @@ func (s *Server) Start() error {
 	}
 	s.Log.Info().Msgf("listening on %v...", s.Addr.String())
 	defer conn.Close()
-	conn.SetReadDeadline(s.Timeout)
+	// conn.SetReadDeadline(s.Timeout)
 
 	for {
 		buf := make([]byte, 1024) // TODO make buffer size configurable, or unlimited. Perhaps there's a convention here
