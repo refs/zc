@@ -22,11 +22,11 @@ type Server struct {
 	Addr    net.UDPAddr
 	Timeout time.Time
 	Log     zerolog.Logger // TODO use this own package's logger
-	end     chan struct{}  // zero allocation channel
+	stop    chan struct{}  // zero allocation channel
 }
 
 // Start starts the main UDP server flow
-func (s *Server) Start() {
+func (s *Server) Start() error {
 	conn, err := net.ListenPacket("udp", ":1053")
 	s.Log.Info().Msg("listening on :1053...")
 	if err != nil {
@@ -45,6 +45,8 @@ func (s *Server) Start() {
 		s.Log.Info().Msg("connection received")
 		go s.Serve(conn, addr, buf[:n])
 	}
+
+	return nil
 }
 
 // Serve sends back a UDP packet to the origin address
@@ -68,4 +70,6 @@ func (s *Server) Serve(pc net.PacketConn, addr net.Addr, datagram []byte) {
 }
 
 // Stop implements the UDPServer interface
-func (s *Server) Stop() {}
+func (s *Server) Stop() {
+	// TODO write to `s.stop` channel
+}
