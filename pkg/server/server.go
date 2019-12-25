@@ -3,6 +3,8 @@ package server
 import (
 	"net"
 	"time"
+
+	"github.com/rs/zerolog"
 )
 
 // UDPServer - please find a more fitting name.
@@ -15,6 +17,7 @@ type UDPServer interface {
 type Server struct {
 	Addr    net.UDPAddr
 	Timeout time.Time
+	log     zerolog.Logger // TODO use this own package's logger
 }
 
 // Serve implements the UDPServer interface
