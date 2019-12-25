@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net"
 	"os"
 	"time"
 
+	"github.com/miekg/dns"
 	zlog "github.com/rs/zerolog"
 )
 
@@ -35,17 +37,28 @@ func main() {
 			break
 		}
 		logger.Info().Msg("connection received")
-		go serve(conn, addr, buf[:n])
+		go serve(conn, addr, buf[:n], logger)
 	}
 
 }
 
-func serve(pc net.PacketConn, addr net.Addr, buf []byte) {
-	// 0 - 1: ID
-	// 2: QR(1): Opcode(4)
-	buf[2] |= 0x80 // Set QR bit
+func serve(pc net.PacketConn, addr net.Addr, buf []byte, logger zlog.Logger) {
+	// Test response with an A RR
+	aRr := dns.A{
+		Hdr: dns.RR_Header{
+			Name: "refs.com",
+		},
+		A: net.IPv4(0, 0, 0, 0),
+	}
 
-	pc.WriteTo(buf, addr)
+	data, err := json.Marshal(aRr)
+	if err != nil {
+		logger.Error().Err(err).Msg("marshaling A RR")
+		pc.Close()
+		os.Exit(1)
+	}
+
+	pc.WriteTo(data, addr)
 }
 
 func newLogger() zlog.Logger {
