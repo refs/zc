@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	addr, err := net.ResolveUDPAddr("udp", "localhost:1053")
+	addr, err := net.ResolveUDPAddr("udp", "localhost:1054")
 	if err != nil {
 		log.Err(err)
 		os.Exit(1)

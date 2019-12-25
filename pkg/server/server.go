@@ -18,6 +18,7 @@ type UDPServer interface {
 }
 
 // Server is a UDP listener
+// TODO: add some functional options for the funs of it, and a constructor.
 type Server struct {
 	Addr    net.UDPAddr
 	Timeout time.Time
@@ -27,11 +28,11 @@ type Server struct {
 
 // Start starts the main UDP server flow
 func (s *Server) Start() error {
-	conn, err := net.ListenPacket("udp", ":1053")
-	s.Log.Info().Msg("listening on :1053...")
+	conn, err := net.ListenPacket("udp", s.Addr.String())
 	if err != nil {
 		os.Exit(1)
 	}
+	s.Log.Info().Msgf("listening on %v...", s.Addr.String())
 	defer conn.Close()
 	// conn.SetReadDeadline(time.Now().Add(30 * time.Second)) // uncomment for a 30 seconds timeout
 
