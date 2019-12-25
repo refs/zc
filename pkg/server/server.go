@@ -34,7 +34,7 @@ func (s *Server) Start() error {
 	}
 	s.Log.Info().Msgf("listening on %v...", s.Addr.String())
 	defer conn.Close()
-	// conn.SetReadDeadline(time.Now().Add(30 * time.Second)) // uncomment for a 30 seconds timeout
+	conn.SetReadDeadline(s.Timeout)
 
 	for {
 		buf := make([]byte, 1024) // TODO make buffer size configurable, or unlimited. Perhaps there's a convention here
@@ -43,7 +43,7 @@ func (s *Server) Start() error {
 			s.Log.Error().Err(err).Msg("closing server")
 			break
 		}
-		s.Log.Info().Msg("connection received")
+		s.Log.Info().Msgf("package from %v", addr.String())
 		go s.Serve(conn, addr, buf[:n])
 	}
 
@@ -57,7 +57,7 @@ func (s *Server) Serve(pc net.PacketConn, addr net.Addr, datagram []byte) {
 		Hdr: dns.RR_Header{
 			Name: "refs.com",
 		},
-		A: net.IPv4(0, 0, 0, 0),
+		A: net.IPv4(0, 4, 2, 0),
 	}
 
 	data, err := json.Marshal(aRr)
@@ -67,7 +67,12 @@ func (s *Server) Serve(pc net.PacketConn, addr net.Addr, datagram []byte) {
 		os.Exit(1)
 	}
 
-	pc.WriteTo(data, addr)
+	n, err := pc.WriteTo(data, addr)
+	if err != nil {
+		s.Log.Error().Err(err).Msg("error sending the package to origin")
+	}
+
+	s.Log.Info().Msgf("%v bytes written to %v", n, addr.String())
 }
 
 // Stop implements the UDPServer interface
