@@ -5,20 +5,20 @@ import (
 	"time"
 )
 
+// UDPServer - please find a more fitting name.
+type UDPServer interface {
+	Serve() // Starts the server
+	Stop()  // Gracefully stops the server
+}
+
 // Server is a UDP listener
 type Server struct {
 	Addr    net.UDPAddr
 	Timeout time.Time
 }
 
-// Start implements the UDPServer interface
-func (s *Server) Start() {}
+// Serve implements the UDPServer interface
+func (s *Server) Serve() {}
 
 // Stop implements the UDPServer interface
 func (s *Server) Stop() {}
-
-// UDPServer - please find a more fitting name.
-type UDPServer interface {
-	Start() // Starts the server
-	Stop()  // Gracefully stops the server
-}
