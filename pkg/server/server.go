@@ -1,10 +1,12 @@
 package server
 
 import (
+	"encoding/json"
 	"net"
 	"os"
 	"time"
 
+	"github.com/miekg/dns"
 	"github.com/rs/zerolog"
 )
 
@@ -46,8 +48,23 @@ func (s *Server) Start() {
 }
 
 // Serve sends back a UDP packet to the origin address
-func (s *Server) Serve(conn net.PacketConn, addr net.Addr, datagram []byte) {
+func (s *Server) Serve(pc net.PacketConn, addr net.Addr, datagram []byte) {
+	// Test response with an A RR
+	aRr := dns.A{
+		Hdr: dns.RR_Header{
+			Name: "refs.com",
+		},
+		A: net.IPv4(0, 0, 0, 0),
+	}
 
+	data, err := json.Marshal(aRr)
+	if err != nil {
+		s.Log.Error().Err(err).Msg("marshaling A RR")
+		pc.Close()
+		os.Exit(1)
+	}
+
+	pc.WriteTo(data, addr)
 }
 
 // Stop implements the UDPServer interface
