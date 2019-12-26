@@ -6,6 +6,9 @@ import (
 	"os"
 )
 
+// resources:
+// - https://askubuntu.com/questions/247625/what-is-the-loopback-device-and-how-do-i-use-it
+
 func main() {
 	// get a network interface and print it
 	// in preparation for listening multicast:
