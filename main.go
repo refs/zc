@@ -1,10 +1,21 @@
 package main
 
+import (
+	"fmt"
+	"net"
+	"os"
+)
+
 func main() {
 	// get a network interface and print it
 	// in preparation for listening multicast:
 	// func ListenMulticastUDP(network string, ifi *Interface, gaddr *UDPAddr) (*UDPConn, error)
+	iface, err := net.InterfaceByIndex(1)
+	if err != nil {
+		os.Exit(1)
+	}
 
+	fmt.Println(iface)
 }
 
 // package main
